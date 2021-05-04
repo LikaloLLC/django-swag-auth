@@ -11,18 +11,26 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from pathlib import Path
+
+import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
+# Load operating system environment variables and then prepare to use them
+env = environ.Env()
+env_file = str(BASE_DIR / '.env')
+env.read_env(env_file)
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'a4u@bqoad#h$^d6k0%df)$thtmaaicol^&k=-!sv^axo(!!nd5'
+SECRET_KEY = env('DJANGO_SECRET_KEY', default='a4u@bqoad#h$^d6k0%df)$thtmaaicol^&k=-!sv^axo(!!nd5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = []
 
@@ -146,8 +154,8 @@ AUTHENTICATION_BACKENDS = [
 SWAGAUTH_SETTINGS = {
   'github': {
     'APP': {
-      'client_id': 'b91d8237c69c8a8ff7af',
-      'secret': 'c94b9103f4a87398ecabd6ad715a98f7f318f44e',
+      'client_id': env('GITHUB_CLIENT_ID'),
+      'secret': env('GITHUB_SECRET'),
       'key': '',
     },
   },
