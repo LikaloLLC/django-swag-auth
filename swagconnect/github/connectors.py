@@ -14,3 +14,4 @@ class GithubConnector(CustomOAuth2Adapter):
     authorize_url = "https://github.com/login/oauth/authorize"
     profile_url = "https://api.github.com/user"
     emails_url = "https://api.github.com/user/emails"
+    scope = ['repository']
