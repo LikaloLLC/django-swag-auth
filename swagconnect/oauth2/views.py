@@ -32,9 +32,6 @@ class CustomOAuth2Adapter(OAuth2Adapter):
     def get_provider(self):
         return
 
-    # def get_callback_url(self, request, app):
-    #     return self.callback_url
-
     def parse_token(self, data):
         token = SocialToken(token=data["access_token"])
         token.token_secret = data.get("refresh_token", "")
