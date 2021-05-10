@@ -1,24 +1,51 @@
+from datetime import timedelta
+
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.helpers import (render_authentication_error)
-from allauth.socialaccount.models import SocialLogin
+from allauth.socialaccount.models import SocialLogin, SocialToken
 from allauth.socialaccount.providers.base import AuthError, ProviderException
 from allauth.socialaccount.providers.oauth2.client import OAuth2Error
 from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter
-
+from allauth.utils import get_request_param
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-
+from django.utils import timezone
 from requests import RequestException
+
+from swagconnect.helpers import complete_authentication
 
 
 class CustomOAuth2Adapter(OAuth2Adapter):
-    provider_id = str()
+    provider_id = None
+    client_id = None
+    secret = None
+    access_token_url = None
+    authorize_url = None
+    profile_url = None
+    emails_url = None
+    scope = []
+    callback_url = None
 
     def complete_login(self, request, app, access_token, **kwargs):
-        return None
+        return
 
     def get_provider(self):
-        return None
+        return
+
+    # def get_callback_url(self, request, app):
+    #     return self.callback_url
+
+    def parse_token(self, data):
+        token = SocialToken(token=data["access_token"])
+        token.token_secret = data.get("refresh_token", "")
+        expires_in = data.get(self.expires_in_key, None)
+        if expires_in:
+            token.expires_at = timezone.now() + timedelta(seconds=int(expires_in))
+        return token
+
+    def get_access_token_data(self, request, app, client):
+        code = get_request_param(self.request, "code")
+        return client.get_access_token(code)
 
 
 class OAuth2View(object):
@@ -37,7 +64,7 @@ class OAuth2View(object):
 
     def get_client(self, request, app):
         callback_url = self.adapter.get_callback_url(request, None)
-        scope = self.adapter.get_scope(request)
+        scope = self.adapter.scope
         client = self.adapter.client_class(
             self.request,
             self.adapter.client_id,
@@ -59,7 +86,7 @@ class OAuth2LoginView(OAuth2View):
         auth_url = self.adapter.authorize_url
         client.state = SocialLogin.stash_state(request)
         try:
-            return HttpResponseRedirect(client.get_redirect_url(auth_url, None))
+            return HttpResponseRedirect(client.get_redirect_url(auth_url, {}))
         except OAuth2Error as e:
             return render_authentication_error(request, self.adapter.provider_id, exception=e)
 
@@ -76,14 +103,11 @@ class OAuth2CallbackView(OAuth2View):
             return render_authentication_error(
                 request, self.adapter.provider_id, error=error
             )
-        client = self.get_client(self.request, None)
-
+        client = self.get_client(request, None)
         try:
             access_token = self.adapter.get_access_token_data(request, None, client)
             token = self.adapter.parse_token(access_token)
-            # return complete_social_login(request, login)
-            print(token)
-            return token
+            return complete_authentication(request, token)
         except (
                 PermissionDenied,
                 OAuth2Error,

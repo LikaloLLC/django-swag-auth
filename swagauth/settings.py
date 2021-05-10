@@ -158,6 +158,9 @@ SWAGAUTH_SETTINGS = {
             'secret': env.str('GITHUB_SECRET'),
             'key': '',
         },
+        'SCOPE':[
+            'repository',
+        ]
     },
     # TODO: other services
 }
