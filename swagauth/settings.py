@@ -152,15 +152,34 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SWAGAUTH_SETTINGS = {
+    'bitbucket': {
+        'APP': {
+            'key': env.str('BITBUCKET_SECRET'),
+            'secret': env.str('BITBUCKET_KEY'),
+        },
+        'SCOPE': {
+
+        },
+    },
     'github': {
         'APP': {
             'client_id': env.str('GITHUB_CLIENT_ID'),
             'secret': env.str('GITHUB_SECRET'),
             'key': '',
         },
-        'SCOPE':[
+        'SCOPE': [
             'repository',
         ]
     },
+    'gitlab': {
+        'APP': {
+            'client_id': env.str('GITLAB_CLIENT_ID'),
+            'secret': env.str('GITLAB_SECRET'),
+            'key': '',
+        },
+        'SCOPE': [
+
+        ]
+    }
     # TODO: other services
 }
