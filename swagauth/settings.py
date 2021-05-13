@@ -154,12 +154,12 @@ AUTHENTICATION_BACKENDS = [
 SWAGAUTH_SETTINGS = {
     'bitbucket': {
         'APP': {
-            'key': env.str('BITBUCKET_SECRET'),
-            'secret': env.str('BITBUCKET_KEY'),
+            'key': env.str('BITBUCKET_KEY'),
+            'secret': env.str('BITBUCKET_SECRET'),
         },
-        'SCOPE': {
+        'SCOPE': [
 
-        },
+        ],
     },
     'github': {
         'APP': {
