@@ -2,3 +2,6 @@ django==2.2.2
 django-allauth==0.44.0
 django-rest-auth==0.9.5
 django-environ~=0.4.5
+
+# Guthub API client
+PyGithub~=1.55

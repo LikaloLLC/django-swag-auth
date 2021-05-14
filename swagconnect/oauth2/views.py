@@ -44,6 +44,10 @@ class CustomOAuth2Adapter(OAuth2Adapter):
         code = get_request_param(self.request, "code")
         return client.get_access_token(code)
 
+    def store_credentials(self, request, token):
+        """Save credentials to the model."""
+        ...
+
 
 class OAuth2View(object):
     @classmethod
