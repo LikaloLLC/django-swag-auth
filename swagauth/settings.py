@@ -161,7 +161,7 @@ SWAGAUTH_SETTINGS = {
             'secret': env.str('BITBUCKET_SECRET'),
         },
         'SCOPE': [
-            'repository'
+            'repository',
         ],
     },
     'github': {
@@ -171,7 +171,7 @@ SWAGAUTH_SETTINGS = {
             'key': '',
         },
         'SCOPE': [
-            'repository',
+            'repo',
         ]
     },
     'gitlab': {
@@ -181,7 +181,7 @@ SWAGAUTH_SETTINGS = {
             'key': '',
         },
         'SCOPE': [
-            'read_repository'
+            'read_repository',
         ]
     }
     # TODO: other services
