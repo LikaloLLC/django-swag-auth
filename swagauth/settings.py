@@ -61,6 +61,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.gitlab',
     'allauth.socialaccount.providers.bitbucket_oauth2',
 
+    # encrypted model fields
+    'encrypted_model_fields',
+
     # my apps
     'swagconnect'
 ]
@@ -183,3 +186,7 @@ SWAGAUTH_SETTINGS = {
     }
     # TODO: other services
 }
+
+# Django encrypted model fields
+# https://pypi.org/project/django-encrypted-model-fields/
+FIELD_ENCRYPTION_KEY = env('FIELD_ENCRYPTION_KEY', default=SECRET_KEY)
