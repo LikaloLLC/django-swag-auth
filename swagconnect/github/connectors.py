@@ -1,4 +1,9 @@
+import json
+from urllib.parse import urlparse
+
+import yaml
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from github import Github
 
 from swagconnect.oauth2.views import CustomOAuth2Adapter
@@ -35,8 +40,39 @@ class GithubAPIConnector:
 
     def get_swagger(self, url: str) -> dict:
         repo_name, branch, path = self._parse_url(url)
+        if not self.validate(path):
+            raise ValidationError("File content type must be JSON, YAML or YML")
 
-    def _parse_url(self, url: str) -> str:
-        """Parse the given url and return repository name, branch and path to the file or direcotry"""
+        repo = self.client.get_repo(repo_name)
+        contents = repo.get_contents(path).decoded_content.decode()
+        if path.endswith('json'):
+            result = json.loads(contents)
+        else:
+            result = yaml.safe_load(contents)
+        return result
+
+    def _parse_url(self, url: str) -> tuple:
+        """
+        Parse the given url and return repository name, branch and path to the file or directory
+        :param url:
+        :return: tuple
+        """
 
         # Return repo name, branch name, path to file
+        uri = urlparse(url)
+        urls = uri.path
+        repo_name, path = urls.split('blob')
+        repo_name, branch = repo_name.strip('/'), path.split('/')[1]
+        path = path.replace('/' + branch + '/', '')
+        return repo_name, branch, path
+
+    def validate(self, path: str) -> bool:
+        """
+        Validate path to YAML or JSON
+        :param url:
+        :return: bool:
+        """
+        path = path.lower()
+        if path.endswith('json') or path.endswith('yml') or path.endswith('yaml'):
+            return True
+        return False
