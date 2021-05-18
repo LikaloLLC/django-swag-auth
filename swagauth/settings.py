@@ -171,7 +171,7 @@ SWAGAUTH_SETTINGS = {
             'key': '',
         },
         'SCOPE': [
-            'repository',
+            'repo',
         ]
     },
     'gitlab': {

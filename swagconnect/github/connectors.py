@@ -43,7 +43,7 @@ class GithubAPIConnector:
         if not self.validate(path):
             raise ValidationError("File content type must be JSON, YAML or YML")
 
-        repo = self.client.get_repo(repo_name)
+        repo = self.client.get_repo(full_name_or_id=repo_name)
         contents = repo.get_contents(path).decoded_content.decode()
         if path.endswith('json'):
             result = json.loads(contents)
@@ -73,6 +73,4 @@ class GithubAPIConnector:
         :return: bool:
         """
         path = path.lower()
-        if path.endswith('json') or path.endswith('yml') or path.endswith('yaml'):
-            return True
-        return False
+        return path.endswith('json') or path.endswith('yml') or path.endswith('yaml')
