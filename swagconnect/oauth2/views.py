@@ -44,8 +44,8 @@ class CustomOAuth2Adapter(OAuth2Adapter):
         code = get_request_param(self.request, "code")
         return client.get_access_token(code)
 
-    def store_credentials(self, request, token):
-        """Save credentials to the model."""
+    def store_credentials(self, request, token, refresh_token=None):
+        """Save credentials in the ConnectorToken model."""
         ...
 
 
@@ -108,6 +108,9 @@ class OAuth2CallbackView(OAuth2View):
         try:
             access_token = self.adapter.get_access_token_data(request, None, client)
             token = self.adapter.parse_token(access_token)
+
+            # self.adapter.store_credentials(token)
+
             return complete_authentication(request, token)
         except (
                 PermissionDenied,
