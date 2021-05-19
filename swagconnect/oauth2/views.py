@@ -54,7 +54,7 @@ class CustomOAuth2Adapter(OAuth2Adapter):
         :param expires_at:
         :return:
         """
-        ConnectorToken.objects.create(
+        return ConnectorToken.objects.create(
             connector=self.provider_id,
             token=token,
             token_secret=token_secret,
