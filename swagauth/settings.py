@@ -189,4 +189,6 @@ SWAGAUTH_SETTINGS = {
 
 # Django encrypted model fields
 # https://pypi.org/project/django-encrypted-model-fields/
-FIELD_ENCRYPTION_KEY = env('FIELD_ENCRYPTION_KEY', default=SECRET_KEY)
+# run ./manage.py generate_encryption_key and set the value in the environment
+# TODO: Add default value
+FIELD_ENCRYPTION_KEY = env('FIELD_ENCRYPTION_KEY')
