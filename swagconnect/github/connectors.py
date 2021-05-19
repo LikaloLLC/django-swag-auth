@@ -24,7 +24,7 @@ class GithubConnector(CustomOAuth2Adapter):
     emails_url = "https://api.github.com/user/emails"
     scope = settings.SWAGAUTH_SETTINGS['github']['SCOPE']
 
-    def store_credentials(self, request, token):
+    def store_credentials(self, request, token, token_secret=None, expires_at=None):
         pass
 
 
@@ -69,7 +69,7 @@ class GithubAPIConnector:
     def validate(self, path: str) -> bool:
         """
         Validate path to YAML or JSON
-        :param url:
+        :param path:
         :return: bool:
         """
         path = path.lower()

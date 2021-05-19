@@ -13,6 +13,7 @@ from django.utils import timezone
 from requests import RequestException
 
 from swagconnect.helpers import complete_authentication
+from swagconnect.models import ConnectorToken
 
 
 class CustomOAuth2Adapter(OAuth2Adapter):
@@ -44,9 +45,21 @@ class CustomOAuth2Adapter(OAuth2Adapter):
         code = get_request_param(self.request, "code")
         return client.get_access_token(code)
 
-    def store_credentials(self, request, token, refresh_token=None):
-        """Save credentials in the ConnectorToken model."""
-        ...
+    def store_credentials(self, request, token, token_secret=None, expires_at=None):
+        """
+        Save credentials in the ConnectorToken model.
+        :param request:
+        :param token:
+        :param token_secret:
+        :param expires_at:
+        :return:
+        """
+        ConnectorToken.objects.create(
+            connector=self.provider_id,
+            token=token,
+            token_secret=token_secret,
+            expires_at=expires_at
+        )
 
 
 class OAuth2View(object):
@@ -108,9 +121,7 @@ class OAuth2CallbackView(OAuth2View):
         try:
             access_token = self.adapter.get_access_token_data(request, None, client)
             token = self.adapter.parse_token(access_token)
-
-            # self.adapter.store_credentials(token)
-
+            self.adapter.store_credentials(request=request, token=token.token, token_secret=token.token_secret)
             return complete_authentication(request, token)
         except (
                 PermissionDenied,
