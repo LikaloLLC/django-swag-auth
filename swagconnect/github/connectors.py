@@ -24,9 +24,6 @@ class GithubConnector(CustomOAuth2Adapter):
     emails_url = "https://api.github.com/user/emails"
     scope = settings.SWAGAUTH_SETTINGS['github']['SCOPE']
 
-    def store_credentials(self, request, token, token_secret=None, expires_at=None):
-        pass
-
 
 class GithubAPIConnector:
     def __init__(self, token):
