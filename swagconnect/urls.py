@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from swagconnect.bitbucket.views import oauth_callback as bitbucket_callback
 from swagconnect.bitbucket.views import oauth_login as bitbucket_login
@@ -6,6 +6,11 @@ from swagconnect.github.views import oauth_callback as github_callback
 from swagconnect.github.views import oauth_login as github_login
 from swagconnect.gitlab.views import oauth_callback as gitlab_callback
 from swagconnect.gitlab.views import oauth_login as gitlab_login
+from swagconnect.views import SwaggerStorageViewSet
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'', SwaggerStorageViewSet)
 
 urlpatterns = [
     # Bitbucket
@@ -19,4 +24,5 @@ urlpatterns = [
     # Gitlab
     path('gitlab/login/', gitlab_login, name='gitlab_login'),
     path('gitlab/callback/', gitlab_callback, name='gitlab_callback'),
+    path('swagger_storage/', include(router.urls)),
 ]
