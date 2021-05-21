@@ -1,8 +1,8 @@
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from .models import SwaggerStorage
-from .serializers import SwaggerStorageSerializer
+from swagconnect.models import SwaggerStorage
+from swagconnect.serializers import SwaggerStorageSerializer
 
 
 class SwaggerStorageViewSet(ModelViewSet):
@@ -13,6 +13,9 @@ class SwaggerStorageViewSet(ModelViewSet):
     lookup_field = 'user'
     http_method_names = ['get', 'post']
 
+    def get_queryset(self):
+        user = self.request.user
+        return SwaggerStorage.objects.filter(user=user)
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
