@@ -1,14 +1,21 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from .serializers import SwaggerStorageSerializer
+from swagconnect.models import SwaggerStorage
+from swagconnect.serializers import SwaggerStorageSerializer
 
 
 class SwaggerStorageViewSet(ModelViewSet):
     serializer_class = SwaggerStorageSerializer
+    queryset = SwaggerStorage.objects.all()
 
-    # TODO:
-    #  1. Must accept only authenticated users (https://www.django-rest-framework.org/api-guide/authentication/)
-    #  2. Must pass current user to the model on save, which can be found in request.user (look at `.perform_create()`)
-    #  3. Add the remaining attributes to this viewset (https://www.django-rest-framework.org/api-guide/viewsets/)
-    #  This endpoint accepts ConnectorToken PK and url to the swagger. For testing, you should authenticate via github,
-    #  copy the PK of the ConnectorToken and pass it to this endpoint.
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'user'
+    http_method_names = ['get', 'post']
+
+    def get_queryset(self):
+        user = self.request.user
+        return SwaggerStorage.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
