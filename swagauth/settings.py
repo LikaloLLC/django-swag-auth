@@ -172,7 +172,8 @@ SWAGAUTH_SETTINGS = {
         },
         'SCOPE': [
             'repo',
-        ]
+        ],
+        'CALLBACK_ULR': 'http://127.0.0.1:8000/swag/github/callback/',
     },
     'gitlab': {
         'APP': {
