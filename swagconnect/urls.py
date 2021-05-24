@@ -14,17 +14,18 @@ router = routers.SimpleRouter()
 router.register(r'', SwaggerStorageViewSet)
 
 urlpatterns = [
-    # Bitbucket
+    # # Bitbucket
     # path('bitbucket/login/', bitbucket_login, name='bitbucket_login'),
     # path('bitbucket/callback/', bitbucket_callback, name='bitbucket_callback'),
     #
     # # Github
     # path('github/login/', github_login, name='github_login'),
     # path('github/callback/', github_callback, name='github_callback'),
-
-    # Gitlab
+    #
+    # # Gitlab
     # path('gitlab/login/', gitlab_login, name='gitlab_login'),
     # path('gitlab/callback/', gitlab_callback, name='gitlab_callback'),
-    # path('swagger_storage/', include(router.urls)),
+    path('swagger_storage/', include(router.urls)),
+
     path('rest-auth/github/', GithubLogin.as_view(), name='github_login')
 ]
