@@ -15,3 +15,6 @@ class GitlabConnector(CustomOAuth2Adapter):
     client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['client_id']
     secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
     scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
+
+
+connector_classes = [GitlabConnector]

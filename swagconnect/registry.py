@@ -1,7 +1,11 @@
 import importlib
+import pkgutil
 from collections import OrderedDict
 
-from django.conf import settings
+
+def get_apps():
+    apps = [name for _, name, _ in pkgutil.iter_modules(['swagconnect'])]
+    return apps
 
 
 class ConnectorRegistry(object):
@@ -14,16 +18,16 @@ class ConnectorRegistry(object):
         return [connector_cls(request) for connector_cls in self.connector_map.values()]
 
     def register(self, cls):
-        self.connector_map[cls.id] = cls
+        self.connector_map[cls.provider_id] = cls
 
-    def by_id(self, id, request=None):
+    def by_id(self, provider_id, request=None):
         self.load()
-        return self.connector_map[id](request=request)
+        return self.connector_map[provider_id](request=request)
 
     def as_choices(self):
         self.load()
         for connector_cls in self.connector_map.values():
-            yield (connector_cls.id, connector_cls.name)
+            yield (connector_cls.provider_id, connector_cls.provider_id)
 
     def load(self):
         # TODO: connectors register with the connectors registry when
@@ -32,10 +36,11 @@ class ConnectorRegistry(object):
         # forcefully importing the `connector` modules here. The overall
         # mechanism is way to magical and depends on the import order et al, so
         # all of this really needs to be revisited.
+        apps = get_apps()
         if not self.loaded:
-            for app in settings.INSTALLED_APPS:
+            for app in apps:
                 try:
-                    connector_module = importlib.import_module(app + ".connectors")
+                    connector_module = importlib.import_module('swagconnect.' + app + '.connectors')
                 except ImportError:
                     pass
                 else:
@@ -44,4 +49,4 @@ class ConnectorRegistry(object):
             self.loaded = True
 
 
-registry = ConnectorRegistry()
+connector_registry = ConnectorRegistry()
