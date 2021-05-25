@@ -1,4 +1,5 @@
 from django.urls import path, include
+from rest_framework import routers
 
 from swagconnect.bitbucket.views import oauth_callback as bitbucket_callback
 from swagconnect.bitbucket.views import oauth_login as bitbucket_login
@@ -7,7 +8,6 @@ from swagconnect.github.views import oauth_login as github_login
 from swagconnect.gitlab.views import oauth_callback as gitlab_callback
 from swagconnect.gitlab.views import oauth_login as gitlab_login
 from swagconnect.views import SwaggerStorageViewSet
-from rest_framework import routers
 
 router = routers.SimpleRouter()
 router.register(r'', SwaggerStorageViewSet)

@@ -71,3 +71,6 @@ class GithubAPIConnector:
         """
         path = path.lower()
         return path.endswith('json') or path.endswith('yml') or path.endswith('yaml')
+
+
+connector_classes = [GithubConnector]
