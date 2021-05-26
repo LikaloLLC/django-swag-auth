@@ -183,6 +183,7 @@ SWAGAUTH_SETTINGS = {
         },
         'SCOPE': [
             'read_repository',
+            'api',
         ]
     }
     # TODO: other services

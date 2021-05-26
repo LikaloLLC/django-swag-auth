@@ -8,3 +8,5 @@ PyGithub~=1.55
 django-encrypted-model-fields~=0.5.8
 # Rest Framework
 djangorestframework ~= 3.12.4
+# Gutlab API client
+python-gitlab
