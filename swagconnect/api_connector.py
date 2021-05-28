@@ -37,7 +37,7 @@ class BaseAPIConnector:
         :param ref:
         :return:
         """
-        pass
+        raise NotImplementedError
 
     def get_user_repo(self, repo_name):
         """
@@ -45,7 +45,7 @@ class BaseAPIConnector:
         :param repo_name:
         :return:
         """
-        pass
+        raise NotImplementedError
 
     def _parse_url(self, url: str) -> tuple:
         """
