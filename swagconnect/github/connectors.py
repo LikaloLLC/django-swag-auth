@@ -1,11 +1,7 @@
-import json
-from urllib.parse import urlparse
-
-import yaml
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from github import Github
 
+from swagconnect.api_connector import BaseAPIConnector
 from swagconnect.oauth2.views import CustomOAuth2Adapter
 
 
@@ -25,52 +21,28 @@ class GithubConnector(CustomOAuth2Adapter):
     scope = settings.SWAGAUTH_SETTINGS['github']['SCOPE']
 
 
-class GithubAPIConnector:
+class GithubAPIConnector(BaseAPIConnector):
     def __init__(self, token):
-        # Init PyGithub here
-        self._token = token
+        super(GithubAPIConnector, self).__init__(token)
         self.client = Github(self._token)
 
-    @classmethod
-    def from_credentials(cls, credentials):
-        return cls(credentials.token)
-
-    def get_swagger(self, url: str) -> dict:
-        repo_name, branch, path = self._parse_url(url)
-        if not self.validate(path):
-            raise ValidationError("File content type must be JSON, YAML or YML")
-
-        repo = self.client.get_repo(full_name_or_id=repo_name)
-        contents = repo.get_contents(path).decoded_content.decode()
-        if path.endswith('json'):
-            result = json.loads(contents)
-        else:
-            result = yaml.safe_load(contents)
-        return result
-
-    def _parse_url(self, url: str) -> tuple:
+    def get_swagger_content(self, repo, path, ref=None):
         """
-        Parse the given url and return repository name, branch and path to the file or directory
-        :param url:
-        :return: tuple
-        """
-
-        # Return repo name, branch name, path to file
-        uri = urlparse(url)
-        urls = uri.path
-        repo_name, path = urls.split('blob')
-        repo_name, branch = repo_name.strip('/'), path.split('/')[1]
-        path = path.replace('/' + branch + '/', '')
-        return repo_name, branch, path
-
-    def validate(self, path: str) -> bool:
-        """
-        Validate path to YAML or JSON
+        Return content of the given path file
+        :param repo:
         :param path:
-        :return: bool:
+        :param ref:
+        :return:
         """
-        path = path.lower()
-        return path.endswith('json') or path.endswith('yml') or path.endswith('yaml')
+        return repo.get_contents(path).decoded_content.decode()
+
+    def get_user_repo(self, repo_name):
+        """
+        Return user`s repository
+        :param repo_name:
+        :return:
+        """
+        return self.client.get_repo(full_name_or_id=repo_name)
 
 
 connector_classes = [GithubConnector]
