@@ -39,7 +39,6 @@ class BitbucketAPIConnector(BaseBitbucket, BaseAPIConnector):
         else:
             result = yaml.safe_load(contents)
 
-        print("\n\n\nRESULT\n", result)
         return result
 
     def get_swagger_content(self, repo, path, ref=None):
