@@ -2,14 +2,12 @@ import json
 from urllib.parse import urlparse
 
 import yaml
-from gitlab import Gitlab
 from rest_framework.exceptions import ValidationError
 
 
 class BaseAPIConnector:
     def __init__(self, token):
         self._token = token
-
 
     @classmethod
     def from_credentials(cls, credentials):
@@ -37,7 +35,7 @@ class BaseAPIConnector:
         :param ref:
         :return:
         """
-        pass
+        raise NotImplementedError
 
     def get_user_repo(self, repo_name):
         """
@@ -45,7 +43,7 @@ class BaseAPIConnector:
         :param repo_name:
         :return:
         """
-        pass
+        raise NotImplementedError
 
     def _parse_url(self, url: str) -> tuple:
         """
