@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from swagauth import settings
 from swagconnect.api_connector import BaseAPIConnector
-from swagconnect.bitbucket.client import BaseBitbucket
+from swagconnect.bitbucket.client import BitbucketAPIClient
 from swagconnect.oauth2.views import CustomOAuth2Adapter
 
 
@@ -21,9 +21,10 @@ class BitbucketConnector(CustomOAuth2Adapter):
     scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
 
 
-class BitbucketAPIConnector(BaseBitbucket, BaseAPIConnector):
+class BitbucketAPIConnector(BaseAPIConnector):
     def __init__(self, token):
         super(BitbucketAPIConnector, self).__init__(token)
+        self.client = BitbucketAPIClient(self._token)
 
     def get_swagger(self, url: str) -> dict:
         repo_name, branch, path = self._parse_url(url)
@@ -31,8 +32,6 @@ class BitbucketAPIConnector(BaseBitbucket, BaseAPIConnector):
         if not self.validate(path):
             raise ValidationError("File content type must be JSON, YAML or YML")
 
-        # repo = self.get_user_repo(repo_name=repo_name)
-        print(repo_name, branch, path)
         contents = self.get_swagger_content(repo=repo_name, path=path, ref=branch)
         if path.endswith('json'):
             result = json.loads(contents)
@@ -49,7 +48,7 @@ class BitbucketAPIConnector(BaseBitbucket, BaseAPIConnector):
         :param ref:
         :return:
         """
-        return self.get_bitbucket_content(repo, path)
+        return self.client.get_bitbucket_content(repo, path)
 
     def get_user_repo(self, repo_name):
         """
