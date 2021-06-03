@@ -2,14 +2,12 @@ import json
 from urllib.parse import urlparse
 
 import yaml
-from gitlab import Gitlab
 from rest_framework.exceptions import ValidationError
 
 
 class BaseAPIConnector:
     def __init__(self, token):
         self._token = token
-
 
     @classmethod
     def from_credentials(cls, credentials):

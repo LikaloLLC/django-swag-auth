@@ -3,10 +3,18 @@ django-allauth==0.44.0
 django-rest-auth==0.9.5
 django-environ~=0.4.5
 pyyaml
+
+django-encrypted-model-fields~=0.5.8
+
 # Guthub API client
 PyGithub~=1.55
-django-encrypted-model-fields~=0.5.8
+
 # Rest Framework
 djangorestframework ~= 3.12.4
+
 # Gutlab API client
 python-gitlab
+
+# Bitbucket-API
+bitbucket-api==0.5.0
+atlassian-python-api
