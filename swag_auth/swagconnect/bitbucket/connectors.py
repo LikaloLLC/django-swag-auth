@@ -5,9 +5,9 @@ import yaml
 from rest_framework.exceptions import ValidationError
 
 from swagauth import settings
-from swagconnect.api_connector import BaseAPIConnector
-from swagconnect.bitbucket.client import BitbucketAPIClient
-from swagconnect.oauth2.views import CustomOAuth2Adapter
+from swag_auth.swagconnect.api_connector import BaseAPIConnector
+from swag_auth.swagconnect.bitbucket.client import BitbucketAPIClient
+from swag_auth.swagconnect.oauth2.views import CustomOAuth2Adapter
 
 
 class BitbucketConnector(CustomOAuth2Adapter):

@@ -1,8 +1,8 @@
 from django.conf import settings
 from github import Github
 
-from swagconnect.api_connector import BaseAPIConnector
-from swagconnect.oauth2.views import CustomOAuth2Adapter
+from swag_auth.swagconnect.api_connector import BaseAPIConnector
+from swag_auth.swagconnect.oauth2.views import CustomOAuth2Adapter
 
 
 class GithubConnector(CustomOAuth2Adapter):
