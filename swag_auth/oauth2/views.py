@@ -12,8 +12,8 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 from requests import RequestException
 
-from swagconnect.helpers import complete_authentication
-from swagconnect.models import ConnectorToken
+from swag_auth.helpers import complete_authentication
+from swag_auth.models import ConnectorToken
 
 
 class CustomOAuth2Adapter(OAuth2Adapter):
