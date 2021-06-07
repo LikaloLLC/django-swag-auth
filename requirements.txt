@@ -13,8 +13,8 @@ PyGithub~=1.55
 djangorestframework ~= 3.12.4
 
 # Gutlab API client
-python-gitlab
+python-gitlab ~= 2.7.1
 
 # Bitbucket-API
-bitbucket-api==0.5.0
-atlassian-python-api
+bitbucket-api ~= 0.5.0
+atlassian-python-api ~= 3.10.0
