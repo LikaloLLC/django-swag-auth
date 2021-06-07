@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 
 def get_apps():
-    apps = [name for _, name, _ in pkgutil.iter_modules(['swagconnect'])]
+    apps = [name for _, name, _ in pkgutil.iter_modules(['swag_auth2'])]
     return apps
 
 
@@ -40,7 +40,7 @@ class ConnectorRegistry(object):
         if not self.loaded:
             for app in apps:
                 try:
-                    connector_module = importlib.import_module('swagconnect.' + app + '.connectors')
+                    connector_module = importlib.import_module('swag_auth2.' + app + '.connectors')
                 except ImportError:
                     pass
                 else:

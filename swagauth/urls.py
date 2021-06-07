@@ -4,5 +4,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('swag/', include('swag_auth.swagconnect.urls'))
+    path('swag/', include('swag_auth.urls'))
 ]

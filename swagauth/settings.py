@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'encrypted_model_fields',
 
     # my apps
-    'swag_auth.swagconnect'
+    'swag_auth.apps.SwagAuthConfig'
 ]
 
 MIDDLEWARE = [

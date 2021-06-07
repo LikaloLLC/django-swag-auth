@@ -1,8 +1,8 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from swag_auth.swagconnect.models import SwaggerStorage
-from swag_auth.swagconnect.serializers import SwaggerStorageSerializer
+from swag_auth.models import SwaggerStorage
+from swag_auth.serializers import SwaggerStorageSerializer
 
 
 class SwaggerStorageViewSet(ModelViewSet):
