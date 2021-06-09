@@ -1,6 +1,6 @@
+from django.conf import settings
 from gitlab import Gitlab
 
-from swagauth import settings
 from swag_auth.api_connector import BaseAPIConnector
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 

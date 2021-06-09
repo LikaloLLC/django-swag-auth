@@ -2,9 +2,9 @@ import json
 from urllib.parse import urlparse
 
 import yaml
+from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
-from swagauth import settings
 from swag_auth.api_connector import BaseAPIConnector
 from swag_auth.bitbucket.client import BitbucketAPIClient
 from swag_auth.oauth2.views import CustomOAuth2Adapter
