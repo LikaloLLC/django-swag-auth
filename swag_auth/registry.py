@@ -3,15 +3,16 @@ import pkgutil
 from collections import OrderedDict
 
 
-def get_apps():
-    apps = [name for _, name, _ in pkgutil.iter_modules(['swag_auth'])]
-    return apps
-
-
 class ConnectorRegistry(object):
-    def __init__(self):
+    def __init__(self, module_name: str):
         self.connector_map = OrderedDict()
         self.loaded = False
+
+        self.module_name = module_name
+
+    def get_apps(self):
+        apps = [name for _, name, _ in pkgutil.iter_modules([self.module_name])]
+        return apps
 
     def get_list(self, request=None):
         self.load()
@@ -36,11 +37,11 @@ class ConnectorRegistry(object):
         # forcefully importing the `connector` modules here. The overall
         # mechanism is way to magical and depends on the import order et al, so
         # all of this really needs to be revisited.
-        apps = get_apps()
+        apps = self.get_apps()
         if not self.loaded:
             for app in apps:
                 try:
-                    connector_module = importlib.import_module('swag_auth.' + app + '.connectors')
+                    connector_module = importlib.import_module(f'{self.module_name}.{app}.connectors')
                 except ImportError:
                     pass
                 else:
@@ -49,4 +50,4 @@ class ConnectorRegistry(object):
             self.loaded = True
 
 
-connector_registry = ConnectorRegistry()
+connector_registry = ConnectorRegistry('swag_auth')
