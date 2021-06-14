@@ -27,6 +27,8 @@ class CustomOAuth2Adapter(OAuth2Adapter):
     scope = []
     callback_url = None
 
+    api_connector_class = None
+
     def complete_login(self, request, app, access_token, **kwargs):
         return
 

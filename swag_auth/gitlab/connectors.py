@@ -5,21 +5,6 @@ from swag_auth.api_connector import BaseAPIConnector
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
-class GitlabConnector(CustomOAuth2Adapter):
-    provider_id = 'gitlab'
-
-    provider_default_url = "https://gitlab.com"
-    provider_api_version = "v4"
-
-    access_token_url = "{0}/oauth/token".format(provider_default_url)
-    authorize_url = "{0}/oauth/authorize".format(provider_default_url)
-    profile_url = "{0}/api/{1}/user".format(provider_default_url, provider_api_version)
-
-    client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['client_id']
-    secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
-    scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
-
-
 class GitlabAPIConnector(BaseAPIConnector):
     def __init__(self, token):
         super(GitlabAPIConnector, self).__init__(token)
@@ -42,6 +27,23 @@ class GitlabAPIConnector(BaseAPIConnector):
         :return:
         """
         return self.client.projects.get(repo_name)
+
+
+class GitlabConnector(CustomOAuth2Adapter):
+    provider_id = 'gitlab'
+
+    provider_default_url = "https://gitlab.com"
+    provider_api_version = "v4"
+
+    access_token_url = "{0}/oauth/token".format(provider_default_url)
+    authorize_url = "{0}/oauth/authorize".format(provider_default_url)
+    profile_url = "{0}/api/{1}/user".format(provider_default_url, provider_api_version)
+
+    client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['client_id']
+    secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
+    scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
+
+    api_connector_class = GitlabAPIConnector
 
 
 connector_classes = [GitlabConnector]

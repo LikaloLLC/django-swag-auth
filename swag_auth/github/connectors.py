@@ -5,22 +5,6 @@ from swag_auth.api_connector import BaseAPIConnector
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
-class GithubConnector(CustomOAuth2Adapter):
-    """
-    Github connector
-    """
-    provider_id = 'github'
-
-    client_id = settings.SWAGAUTH_SETTINGS['github']['APP']['client_id']
-    secret = settings.SWAGAUTH_SETTINGS['github']['APP']['secret']
-
-    access_token_url = "https://github.com/login/oauth/access_token"
-    authorize_url = "https://github.com/login/oauth/authorize"
-    profile_url = "https://api.github.com/user"
-    emails_url = "https://api.github.com/user/emails"
-    scope = settings.SWAGAUTH_SETTINGS['github']['SCOPE']
-
-
 class GithubAPIConnector(BaseAPIConnector):
     def __init__(self, token):
         super(GithubAPIConnector, self).__init__(token)
@@ -43,6 +27,24 @@ class GithubAPIConnector(BaseAPIConnector):
         :return:
         """
         return self.client.get_repo(full_name_or_id=repo_name)
+
+
+class GithubConnector(CustomOAuth2Adapter):
+    """
+    Github connector
+    """
+    provider_id = 'github'
+
+    client_id = settings.SWAGAUTH_SETTINGS['github']['APP']['client_id']
+    secret = settings.SWAGAUTH_SETTINGS['github']['APP']['secret']
+
+    access_token_url = "https://github.com/login/oauth/access_token"
+    authorize_url = "https://github.com/login/oauth/authorize"
+    profile_url = "https://api.github.com/user"
+    emails_url = "https://api.github.com/user/emails"
+    scope = settings.SWAGAUTH_SETTINGS['github']['SCOPE']
+
+    api_connector_class = GithubAPIConnector
 
 
 connector_classes = [GithubConnector]

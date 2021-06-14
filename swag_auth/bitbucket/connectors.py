@@ -4,21 +4,9 @@ from urllib.parse import urlparse
 import yaml
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
-
 from swag_auth.api_connector import BaseAPIConnector
 from swag_auth.bitbucket.client import BitbucketAPIClient
 from swag_auth.oauth2.views import CustomOAuth2Adapter
-
-
-class BitbucketConnector(CustomOAuth2Adapter):
-    provider_id = 'bitbucket'
-    access_token_url = "https://bitbucket.org/site/oauth2/access_token"
-    authorize_url = "https://bitbucket.org/site/oauth2/authorize"
-    profile_url = "https://api.bitbucket.org/2.0/user"
-    emails_url = "https://api.bitbucket.org/2.0/user/emails"
-    client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['key']
-    secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
-    scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
 
 
 class BitbucketAPIConnector(BaseAPIConnector):
@@ -74,6 +62,19 @@ class BitbucketAPIConnector(BaseAPIConnector):
         repo_name = repo_name.strip('-')
         repo_name = repo_name.strip('/')
         return repo_name, branch, path
+
+
+class BitbucketConnector(CustomOAuth2Adapter):
+    provider_id = 'bitbucket'
+    access_token_url = "https://bitbucket.org/site/oauth2/access_token"
+    authorize_url = "https://bitbucket.org/site/oauth2/authorize"
+    profile_url = "https://api.bitbucket.org/2.0/user"
+    emails_url = "https://api.bitbucket.org/2.0/user/emails"
+    client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['key']
+    secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
+    scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
+
+    api_connector_class = BitbucketAPIConnector
 
 
 connector_classes = [BitbucketConnector]

@@ -1,5 +1,5 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 
 def complete_authentication(request, token):
-    return HttpResponse("<h1>Success</h1>", status=200)
+    return JsonResponse(status=200, data={'token': token.id})
