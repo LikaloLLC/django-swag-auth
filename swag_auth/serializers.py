@@ -11,5 +11,5 @@ class SwaggerStorageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SwaggerStorage
-        fields = ('user', 'url', 'token')
+        fields = ('pk', 'user', 'url', 'token')
 
