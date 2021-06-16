@@ -13,3 +13,7 @@ class SwaggerStorageSerializer(serializers.ModelSerializer):
         model = SwaggerStorage
         fields = ('pk', 'user', 'url', 'token')
 
+    def save(self, **kwargs):
+        """Include default for read_only `user` field"""
+        kwargs["user"] = self.fields["user"].get_default()
+        return super().save(**kwargs)
