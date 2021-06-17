@@ -11,8 +11,9 @@ class ConnectorRegistry(object):
         self.module_name = module_name
 
     def get_apps(self):
-        apps = [name for _, name, _ in pkgutil.iter_modules([self.module_name])]
-        return apps
+        package = importlib.import_module(self.module_name)
+
+        return [name for _, name, _ in pkgutil.iter_modules(package.__path__)]
 
     def get_list(self, request=None):
         self.load()

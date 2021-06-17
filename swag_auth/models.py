@@ -2,9 +2,9 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from encrypted_model_fields.fields import EncryptedTextField
-from swag_auth.api_connector import BaseAPIConnector
 
-from .registry import connector_registry
+import swag_auth.registry as registry
+from swag_auth.api_connector import BaseAPIConnector
 
 
 class ConnectorToken(models.Model):
@@ -32,9 +32,9 @@ class ConnectorToken(models.Model):
 
     def get_api_connector(self) -> 'BaseAPIConnector':
         """Return an initialized instance of API connector for the particular connector."""
-        provider = connector_registry.by_id(self.connector)
+        provider = registry.connector_registry.by_id(self.connector)
 
-        return provider.get_api_connector(self.token)
+        return provider.api_connector_class(self.token)
 
 
 class SwaggerStorage(models.Model):
