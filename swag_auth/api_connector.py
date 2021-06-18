@@ -14,12 +14,12 @@ class BaseAPIConnector:
         return cls(credentials.token)
 
     def get_swagger(self, url: str) -> dict:
-        repo_name, branch, path = self._parse_url(url)
+        owner, repo_name, branch, path = self._parse_url(url)
 
         if not self.validate(path):
             raise ValidationError("File content type must be JSON, YAML or YML")
 
-        repo = self.get_user_repo(repo_name=repo_name)
+        repo = self.get_user_repo(repo_name=f'{owner}/{repo_name}')
         contents = self.get_swagger_content(repo=repo, path=path, ref=branch)
         if path.endswith('json'):
             result = json.loads(contents)
@@ -54,6 +54,7 @@ class BaseAPIConnector:
         # Return repo name, branch name, path to file
         p = parse(url)
         repo_name = p.repo
+        owner = p.owner
         b = p.branch
         if b:
             branch = b.split('/', 1)[0]
@@ -61,7 +62,7 @@ class BaseAPIConnector:
         else:
             branch = p.path.split('/', 1)[0]
             path = p.path.replace(f"{branch}/", '')
-        return repo_name, branch, path
+        return owner, repo_name, branch, path
 
     def validate(self, path: str) -> bool:
         """
