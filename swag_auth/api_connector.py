@@ -1,7 +1,7 @@
 import json
-from giturlparse import parse
 
 import yaml
+from giturlparse import parse
 from rest_framework.exceptions import ValidationError
 
 
@@ -54,8 +54,13 @@ class BaseAPIConnector:
         # Return repo name, branch name, path to file
         p = parse(url)
         repo_name = p.repo
-        branch = p.path.split('/', 1)[0]
-        path = p.path.replace(f"{branch}/", '')
+        b = p.branch
+        if b:
+            branch = b.split('/', 1)[0]
+            path = b.replace(f'{branch}/', '')
+        else:
+            branch = p.path.split('/', 1)[0]
+            path = p.path.replace(f"{branch}/", '')
         return repo_name, branch, path
 
     def validate(self, path: str) -> bool:
