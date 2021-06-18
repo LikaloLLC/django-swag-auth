@@ -38,6 +38,7 @@ setuptools.setup(
         "bitbucket-api",
         "atlassian-python-api",
         "django-environ",
+        "giturlparse"
     ],
     include_package_data=True,
     setup_requires=["wheel"]
