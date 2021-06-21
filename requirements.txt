@@ -2,7 +2,7 @@ django==2.2.2
 django-allauth==0.44.0
 django-rest-auth==0.9.5
 django-environ~=0.4.5
-pyyaml
+pyyaml~=5.4.1
 
 django-encrypted-model-fields~=0.5.8
 
@@ -18,3 +18,5 @@ python-gitlab ~= 2.7.1
 # Bitbucket-API
 bitbucket-api ~= 0.5.0
 atlassian-python-api ~= 3.10.0
+
+giturlparse~=0.10.0

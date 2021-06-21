@@ -1,16 +1,17 @@
 from django.conf import settings
 from gitlab import Gitlab
 
-from swag_auth.api_connector import BaseAPIConnector
+from swag_auth.api_connector import BaseGitSwaggerDownloader
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
-class GitlabAPIConnector(BaseAPIConnector):
+class GitlabSwaggerDownloader(BaseGitSwaggerDownloader):
     def __init__(self, token):
-        super(GitlabAPIConnector, self).__init__(token)
+        super().__init__(token)
+
         self.client = Gitlab("https://gitlab.com", oauth_token=self._token)
 
-    def get_swagger_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref=None):
         """
         Return content of the given path file
         :param repo:
@@ -43,7 +44,7 @@ class GitlabConnector(CustomOAuth2Adapter):
     secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
     scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
 
-    api_connector_class = GitlabAPIConnector
+    api_connector_class = GitlabSwaggerDownloader
 
 
 connector_classes = [GitlabConnector]
