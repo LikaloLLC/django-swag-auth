@@ -4,23 +4,24 @@ from urllib.parse import urlparse
 import yaml
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
-from swag_auth.api_connector import BaseAPIConnector
+from swag_auth.api_connector import BaseGitSwaggerDownloader
 from swag_auth.bitbucket.client import BitbucketAPIClient
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
-class BitbucketAPIConnector(BaseAPIConnector):
+class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
     def __init__(self, token):
-        super(BitbucketAPIConnector, self).__init__(token)
+        super().__init__(token)
+
         self.client = BitbucketAPIClient(self._token)
 
     def get_swagger(self, url: str) -> dict:
         repo_name, branch, path = self._parse_url(url)
 
-        if not self.validate(path):
+        if not self.is_path_valid(path):
             raise ValidationError("File content type must be JSON, YAML or YML")
 
-        contents = self.get_swagger_content(repo=repo_name, path=path, ref=branch)
+        contents = self.get_file_content(repo=repo_name, path=path, ref=branch)
         if path.endswith('json'):
             result = json.loads(contents)
         else:
@@ -28,7 +29,7 @@ class BitbucketAPIConnector(BaseAPIConnector):
 
         return result
 
-    def get_swagger_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref=None):
         """
         Return content of the given path file
         :param repo:
@@ -74,7 +75,7 @@ class BitbucketConnector(CustomOAuth2Adapter):
     secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
     scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
 
-    api_connector_class = BitbucketAPIConnector
+    api_connector_class = BitbucketSwaggerDownloader
 
 
 connector_classes = [BitbucketConnector]

@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from encrypted_model_fields.fields import EncryptedTextField
 
 import swag_auth.registry as registry
-from swag_auth.api_connector import BaseAPIConnector
+from swag_auth.api_connector import BaseGitSwaggerDownloader
 
 
 class ConnectorToken(models.Model):
@@ -30,7 +30,7 @@ class ConnectorToken(models.Model):
     def __str__(self):
         return self.token
 
-    def get_api_connector(self) -> 'BaseAPIConnector':
+    def get_api_connector(self) -> 'BaseGitSwaggerDownloader':
         """Return an initialized instance of API connector for the particular connector."""
         provider = registry.connector_registry.by_id(self.connector)
 
