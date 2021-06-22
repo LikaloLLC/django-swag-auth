@@ -1,9 +1,7 @@
-import json
 from urllib.parse import urlparse
 
-import yaml
 from django.conf import settings
-from rest_framework.exceptions import ValidationError
+
 from swag_auth.api_connector import BaseGitSwaggerDownloader
 from swag_auth.bitbucket.client import BitbucketAPIClient
 from swag_auth.oauth2.views import CustomOAuth2Adapter
@@ -14,20 +12,6 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         super().__init__(token)
 
         self.client = BitbucketAPIClient(self._token)
-
-    def get_swagger(self, url: str) -> dict:
-        repo_name, branch, path = self._parse_url(url)
-
-        if not self.is_path_valid(path):
-            raise ValidationError("File content type must be JSON, YAML or YML")
-
-        contents = self.get_file_content(repo=repo_name, path=path, ref=branch)
-        if path.endswith('json'):
-            result = json.loads(contents)
-        else:
-            result = yaml.safe_load(contents)
-
-        return result
 
     def get_file_content(self, repo, path, ref=None):
         """
@@ -45,7 +29,7 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         :param repo_name:
         :return:
         """
-        return
+        return repo_name
 
     def _parse_url(self, url: str) -> tuple:
         """
