@@ -36,6 +36,16 @@ class BaseGitAPIConnector(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_default_branch(self, repo) -> str:
+        """
+        Return repo`s default branch
+        :param repo:
+        :return: branch name
+        :rtype: str
+        """
+        pass
+
     def _parse_url(self, url: str) -> tuple:
         """
         Parse the given url and return repository name, branch and path to the file or directory
