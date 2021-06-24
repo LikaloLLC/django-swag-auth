@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from allauth.exceptions import ImmediateHttpResponse
-from allauth.socialaccount.helpers import (render_authentication_error)
+from allauth.socialaccount.helpers import render_authentication_error
 from allauth.socialaccount.models import SocialLogin
 from allauth.socialaccount.providers.base import AuthError, ProviderException
 from allauth.socialaccount.providers.oauth2.client import OAuth2Error
@@ -26,6 +26,8 @@ class CustomOAuth2Adapter(OAuth2Adapter):
     emails_url = None
     scope = []
     callback_url = None
+
+    api_connector_class = None
 
     def complete_login(self, request, app, access_token, **kwargs):
         return

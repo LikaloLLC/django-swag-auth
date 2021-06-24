@@ -3,6 +3,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from encrypted_model_fields.fields import EncryptedTextField
 
+import swag_auth.registry as registry
+from swag_auth.api_connector import BaseGitSwaggerDownloader
+
 
 class ConnectorToken(models.Model):
     # Must contain provider id
@@ -27,6 +30,12 @@ class ConnectorToken(models.Model):
     def __str__(self):
         return self.token
 
+    def get_api_connector(self) -> 'BaseGitSwaggerDownloader':
+        """Return an initialized instance of API connector for the particular connector."""
+        provider = registry.connector_registry.by_id(self.connector)
+
+        return provider.api_connector_class(self.token)
+
 
 class SwaggerStorage(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -44,3 +53,9 @@ class SwaggerStorage(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('token')
     )
+
+    def get_file(self):
+        """Return content of the file, specified in the url field."""
+        api_connector = self.token.get_api_connector()
+
+        return api_connector.get_swagger(self.url)

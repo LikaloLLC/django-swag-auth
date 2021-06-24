@@ -1,11 +1,14 @@
 import json
-from urllib.parse import urlparse
+import os
+from abc import ABC, abstractmethod
+from typing import Union
 
 import yaml
+from giturlparse import parse
 from rest_framework.exceptions import ValidationError
 
 
-class BaseAPIConnector:
+class BaseGitAPIConnector(ABC):
     def __init__(self, token):
         self._token = token
 
@@ -13,21 +16,8 @@ class BaseAPIConnector:
     def from_credentials(cls, credentials):
         return cls(credentials.token)
 
-    def get_swagger(self, url: str) -> dict:
-        repo_name, branch, path = self._parse_url(url)
-
-        if not self.validate(path):
-            raise ValidationError("File content type must be JSON, YAML or YML")
-
-        repo = self.get_user_repo(repo_name=repo_name)
-        contents = self.get_swagger_content(repo=repo, path=path, ref=branch)
-        if path.endswith('json'):
-            result = json.loads(contents)
-        else:
-            result = yaml.safe_load(contents)
-        return result
-
-    def get_swagger_content(self, repo, path, ref=None):
+    @abstractmethod
+    def get_file_content(self, repo, path, ref=None):
         """
         Return content of the given path file
         :param repo:
@@ -35,15 +25,16 @@ class BaseAPIConnector:
         :param ref:
         :return:
         """
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def get_user_repo(self, repo_name):
         """
         Return user`s repository
         :param repo_name:
         :return:
         """
-        raise NotImplementedError
+        pass
 
     def _parse_url(self, url: str) -> tuple:
         """
@@ -52,21 +43,49 @@ class BaseAPIConnector:
         :return: tuple
         """
         # Return repo name, branch name, path to file
-        uri = urlparse(url)
-        urls = uri.path
-        repo_name, path = urls.split('blob')
+        p = parse(url)
+        repo_name = p.repo
+        owner = p.owner
+        b = p.branch
+        if b:
+            branch = b.split('/', 1)[0]
+            path = b.replace(f'{branch}/', '')
+        else:
+            branch = p.path.split('/', 1)[0]
+            path = p.path.replace(f"{branch}/", '')
 
-        repo_name, branch = repo_name.strip('/'), path.split('/')[1]
-        path = path.replace('/' + branch + '/', '')
-        repo_name = repo_name.strip('-')
-        repo_name = repo_name.strip('/')
-        return repo_name, branch, path
+        return owner, repo_name, branch, path
 
-    def validate(self, path: str) -> bool:
+
+class BaseGitSwaggerDownloader(BaseGitAPIConnector, ABC):
+    # A mapping of extension name to a real loader
+    loaders = {
+        'json': json.loads,
+        'yml': yaml.safe_load,
+        'yaml': yaml.safe_load
+    }
+
+    def get_swagger_data(self, path: str, contents: Union[str, bytes]):
+        extension = os.path.splitext(path)[1][1:]
+
+        return self.loaders[extension](contents)
+
+    def get_swagger(self, url: str) -> dict:
+        owner, repo_name, branch, path = self._parse_url(url)
+
+        if not self.is_path_valid(path):
+            raise ValidationError("File content type must be JSON, YAML or YML")
+
+        repo = self.get_user_repo(repo_name=f'{owner}/{repo_name}')
+        contents = self.get_file_content(repo=repo, path=path, ref=branch)
+
+        return self.get_swagger_data(path, contents)
+
+    def is_path_valid(self, path: str) -> bool:
         """
         Validate path to YAML or JSON
         :param path:
         :return: bool:
         """
-        path = path.lower()
-        return path.endswith('json') or path.endswith('yml') or path.endswith('yaml')
+        extension = os.path.splitext(path)[1][1:]
+        return extension in self.loaders

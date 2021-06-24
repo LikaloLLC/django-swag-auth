@@ -1,46 +1,19 @@
-import json
 from urllib.parse import urlparse
 
-import yaml
-from rest_framework.exceptions import ValidationError
+from django.conf import settings
 
-from swagauth import settings
-from swag_auth.api_connector import BaseAPIConnector
+from swag_auth.api_connector import BaseGitSwaggerDownloader
 from swag_auth.bitbucket.client import BitbucketAPIClient
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
-class BitbucketConnector(CustomOAuth2Adapter):
-    provider_id = 'bitbucket'
-    access_token_url = "https://bitbucket.org/site/oauth2/access_token"
-    authorize_url = "https://bitbucket.org/site/oauth2/authorize"
-    profile_url = "https://api.bitbucket.org/2.0/user"
-    emails_url = "https://api.bitbucket.org/2.0/user/emails"
-    client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['key']
-    secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
-    scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
-
-
-class BitbucketAPIConnector(BaseAPIConnector):
+class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
     def __init__(self, token):
-        super(BitbucketAPIConnector, self).__init__(token)
+        super().__init__(token)
+
         self.client = BitbucketAPIClient(self._token)
 
-    def get_swagger(self, url: str) -> dict:
-        repo_name, branch, path = self._parse_url(url)
-
-        if not self.validate(path):
-            raise ValidationError("File content type must be JSON, YAML or YML")
-
-        contents = self.get_swagger_content(repo=repo_name, path=path, ref=branch)
-        if path.endswith('json'):
-            result = json.loads(contents)
-        else:
-            result = yaml.safe_load(contents)
-
-        return result
-
-    def get_swagger_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref=None):
         """
         Return content of the given path file
         :param repo:
@@ -56,7 +29,7 @@ class BitbucketAPIConnector(BaseAPIConnector):
         :param repo_name:
         :return:
         """
-        return
+        return repo_name
 
     def _parse_url(self, url: str) -> tuple:
         """
@@ -74,6 +47,19 @@ class BitbucketAPIConnector(BaseAPIConnector):
         repo_name = repo_name.strip('-')
         repo_name = repo_name.strip('/')
         return repo_name, branch, path
+
+
+class BitbucketConnector(CustomOAuth2Adapter):
+    provider_id = 'bitbucket'
+    access_token_url = "https://bitbucket.org/site/oauth2/access_token"
+    authorize_url = "https://bitbucket.org/site/oauth2/authorize"
+    profile_url = "https://api.bitbucket.org/2.0/user"
+    emails_url = "https://api.bitbucket.org/2.0/user/emails"
+    client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['key']
+    secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
+    scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
+
+    api_connector_class = BitbucketSwaggerDownloader
 
 
 connector_classes = [BitbucketConnector]
