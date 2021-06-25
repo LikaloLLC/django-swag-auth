@@ -19,7 +19,7 @@ class BitbucketAPIClient:
         }
         return headers
 
-    def get_bitbucket_content(self, repo_name, path_file):
+    def get_bitbucket_content(self, repo_name, path_file, ref):
         """
         Returns the content of the given file
         :param repo_name:

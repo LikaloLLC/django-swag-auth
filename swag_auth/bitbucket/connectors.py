@@ -13,7 +13,7 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
 
         self.client = BitbucketAPIClient(self._token)
 
-    def get_file_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref):
         """
         Return content of the given path file
         :param repo:
@@ -21,7 +21,7 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         :param ref:
         :return:
         """
-        return self.client.get_bitbucket_content(repo, path)
+        return self.client.get_bitbucket_content(repo, path, ref)
 
     def get_user_repo(self, repo_name):
         """
@@ -30,6 +30,9 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         :return:
         """
         return repo_name
+
+    def get_default_branch(self, repo) -> str:
+        return repo.default_branch
 
     def _parse_url(self, url: str) -> tuple:
         """
