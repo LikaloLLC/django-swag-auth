@@ -11,7 +11,7 @@ class GithubSwaggerDownloader(BaseGitSwaggerDownloader):
 
         self.client = Github(self._token)
 
-    def get_file_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref):
         """
         Return content of the given path file
         :param repo:
@@ -19,7 +19,7 @@ class GithubSwaggerDownloader(BaseGitSwaggerDownloader):
         :param ref:
         :return:
         """
-        return repo.get_contents(path).decoded_content.decode()
+        return repo.get_contents(path, ref=ref).decoded_content.decode()
 
     def get_user_repo(self, repo_name):
         """

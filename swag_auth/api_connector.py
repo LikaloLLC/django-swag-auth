@@ -17,7 +17,7 @@ class BaseGitAPIConnector(ABC):
         return cls(credentials.token)
 
     @abstractmethod
-    def get_file_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref):
         """
         Return content of the given path file
         :param repo:

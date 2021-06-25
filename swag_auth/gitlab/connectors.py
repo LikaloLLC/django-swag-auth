@@ -11,7 +11,7 @@ class GitlabSwaggerDownloader(BaseGitSwaggerDownloader):
 
         self.client = Gitlab("https://gitlab.com", oauth_token=self._token)
 
-    def get_file_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref):
         """
         Return content of the given path file
         :param repo:
@@ -28,6 +28,9 @@ class GitlabSwaggerDownloader(BaseGitSwaggerDownloader):
         :return:
         """
         return self.client.projects.get(repo_name)
+
+    def get_default_branch(self, repo) -> str:
+        return repo.default_branch
 
 
 class GitlabConnector(CustomOAuth2Adapter):
