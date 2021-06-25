@@ -90,6 +90,10 @@ class BaseGitSwaggerDownloader(BaseGitAPIConnector, ABC):
             raise ValidationError("File content type must be JSON, YAML or YML")
 
         repo = self.get_user_repo(repo_name=f'{owner}/{repo_name}')
+
+        if not branch:
+            branch = self.get_default_branch(repo)
+
         contents = self.get_file_content(repo=repo, path=path, ref=branch)
 
         return self.get_swagger_data(path, contents)

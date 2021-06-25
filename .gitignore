@@ -142,4 +142,4 @@ cython_debug/
 .idea
 
 # Test django application
-app/
+conf/

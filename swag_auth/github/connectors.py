@@ -29,6 +29,9 @@ class GithubSwaggerDownloader(BaseGitSwaggerDownloader):
         """
         return self.client.get_repo(full_name_or_id=repo_name)
 
+    def get_default_branch(self, repo) -> str:
+        return repo.default_branch
+
 
 class GithubConnector(CustomOAuth2Adapter):
     """
