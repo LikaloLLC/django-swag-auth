@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 
+from atlassian.bitbucket.cloud import Cloud
 from django.conf import settings
 
 from swag_auth.api_connector import BaseGitSwaggerDownloader
@@ -12,6 +13,17 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         super().__init__(token)
 
         self.client = BitbucketAPIClient(self._token)
+        token = {
+            'access_token': token,
+            'token_type': 'bearer'
+        }
+        oauth2_dict = {
+            "client_id": settings.SWAGAUTH_SETTINGS['bitbucket']['APP']['key'],
+            "token": token}
+        self.cloud = Cloud(
+            url='https://api.bitbucket.org/',
+            oauth2=oauth2_dict
+        )
 
     def get_file_content(self, repo, path, ref):
         """
@@ -32,7 +44,13 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         return repo_name
 
     def get_default_branch(self, repo) -> str:
-        return repo.default_branch
+        repo, branch = repo.split('/', 1)[0], ''
+        repository = self.cloud.repositories.get(repo)
+        for repos in repository.values():
+            if isinstance(repos, list):
+                branch = repos[0].get('mainbranch').get('name')
+                break
+        return branch
 
     def _parse_url(self, url: str) -> tuple:
         """
@@ -47,9 +65,9 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
 
         repo_name, branch = repo_name.strip('/'), path.split('/')[1]
         path = path.replace('/' + branch + '/', '')
-        repo_name = repo_name.strip('-')
-        repo_name = repo_name.strip('/')
-        return repo_name, branch, path
+        repo_name = repo_name.strip('-').strip('/')
+        owner, repo_name = repo_name.split('/')
+        return owner, repo_name, branch, path
 
 
 class BitbucketConnector(CustomOAuth2Adapter):
