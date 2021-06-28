@@ -17,7 +17,7 @@ class BaseGitAPIConnector(ABC):
         return cls(credentials.token)
 
     @abstractmethod
-    def get_file_content(self, repo, path, ref=None):
+    def get_file_content(self, repo, path, ref):
         """
         Return content of the given path file
         :param repo:
@@ -33,6 +33,16 @@ class BaseGitAPIConnector(ABC):
         Return user`s repository
         :param repo_name:
         :return:
+        """
+        pass
+
+    @abstractmethod
+    def get_default_branch(self, repo) -> str:
+        """
+        Return repository's default branch
+        :param repo:
+        :return: branch:
+        :rtype: str:
         """
         pass
 
@@ -53,6 +63,9 @@ class BaseGitAPIConnector(ABC):
         else:
             branch = p.path.split('/', 1)[0]
             path = p.path.replace(f"{branch}/", '')
+
+        if repo_name == '-':
+            repo_name = p.data.get('groups_path')
 
         return owner, repo_name, branch, path
 
@@ -77,6 +90,10 @@ class BaseGitSwaggerDownloader(BaseGitAPIConnector, ABC):
             raise ValidationError("File content type must be JSON, YAML or YML")
 
         repo = self.get_user_repo(repo_name=f'{owner}/{repo_name}')
+
+        if not branch:
+            branch = self.get_default_branch(repo)
+
         contents = self.get_file_content(repo=repo, path=path, ref=branch)
 
         return self.get_swagger_data(path, contents)
