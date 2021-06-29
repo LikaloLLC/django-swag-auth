@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 
@@ -25,4 +27,4 @@ class BitbucketAPIClient:
         :return:
         """
         url = self.api_url + 'repositories/' + repo_name + f'/src/{ref}/' + path_file + '?ref=' + ref
-        return requests.get(url=url, headers=self.get_header()).content
+        return json.loads(requests.get(url=url, headers=self.get_header()).content)['values']
