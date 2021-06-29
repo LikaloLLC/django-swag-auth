@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 
@@ -19,16 +17,12 @@ class BitbucketAPIClient:
         }
         return headers
 
-    def get_bitbucket_content(self, repo_name, path_file, ref):
+    def get_content(self, repo_name, path_file, ref):
         """
         Returns the content of the given file
         :param repo_name:
         :param path_file:
         :return:
         """
-        url = self.api_url + 'repositories/' + repo_name + '/src/'
-        repo_content = requests.get(url=url, headers=self.get_header())
-        data = json.loads(repo_content.content.decode('utf-8'))
-        hash = data['values'][0]['commit']['hash']
-        url = url + hash + '/' + path_file
+        url = self.api_url + 'repositories/' + repo_name + f'/src/{ref}/' + path_file + '?ref=' + ref
         return requests.get(url=url, headers=self.get_header()).content
