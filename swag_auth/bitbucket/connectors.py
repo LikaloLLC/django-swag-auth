@@ -46,8 +46,7 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
     def get_default_branch(self, repo) -> str:
         repo, branch = repo.split('/', 1)[0], ''
         repository = self.cloud.repositories.get(repo)
-        branch = repository['values'][0]['mainbranch']['name']
-        return branch
+        return repository['values'][0]['mainbranch']['name']
 
     def _parse_url(self, url: str) -> tuple:
         """
