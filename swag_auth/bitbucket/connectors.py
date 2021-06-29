@@ -33,7 +33,7 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         :param ref:
         :return:
         """
-        return self.client.get_bitbucket_content(repo, path, ref)
+        return self.client.get_content(repo, path, ref)
 
     def get_user_repo(self, repo_name):
         """
@@ -46,11 +46,7 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
     def get_default_branch(self, repo) -> str:
         repo, branch = repo.split('/', 1)[0], ''
         repository = self.cloud.repositories.get(repo)
-        for repos in repository.values():
-            if isinstance(repos, list):
-                branch = repos[0].get('mainbranch').get('name')
-                break
-        return branch
+        return repository['values'][0]['mainbranch']['name']
 
     def _parse_url(self, url: str) -> tuple:
         """
