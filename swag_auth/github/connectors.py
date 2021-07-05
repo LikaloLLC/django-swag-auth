@@ -1,11 +1,11 @@
 from django.conf import settings
 from github import Github
 
-from swag_auth.api_connector import BaseGitSwaggerDownloader
+from swag_auth.api_connector import BaseGitSwaggerDownloader, BaseGitAPIConnector
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
-class GithubSwaggerDownloader(BaseGitSwaggerDownloader):
+class GithubAPIConnector(BaseGitAPIConnector):
     def __init__(self, token):
         super().__init__(token)
 
@@ -31,6 +31,10 @@ class GithubSwaggerDownloader(BaseGitSwaggerDownloader):
 
     def get_default_branch(self, repo) -> str:
         return repo.default_branch
+
+
+class GithubSwaggerDownloader(BaseGitSwaggerDownloader):
+    api_connector_cls = GithubAPIConnector
 
 
 class GithubConnector(CustomOAuth2Adapter):
