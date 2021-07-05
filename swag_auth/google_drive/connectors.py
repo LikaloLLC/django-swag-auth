@@ -10,17 +10,17 @@ class GoogleDriveAPIConnector(BaseAPIConnector):
         credentials = Credentials(token=token)
         self.client = build('drive', 'v3', credentials=credentials)
 
-    def get_file_content(self, file_id):
+    def get_file_content(self, file_id: str):
         pass
 
 
 class GoogleDriveSwaggerDownloader(BaseSwaggerDownloader):
     api_connector_cls = GoogleDriveAPIConnector
 
-    def get_swagger_content(self, url, connector):
+    def get_swagger_content(self, url: str, connector: 'GoogleDriveAPIConnector'):
         pass
 
-    def get_file_id(self, url):
+    def get_file_id(self, url: str) -> str:
         pass
 
     def get_extension(self, url):

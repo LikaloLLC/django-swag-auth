@@ -64,10 +64,10 @@ class BaseSwaggerDownloader(ABC):
         return self.get_swagger_data(extension, contents)
 
     @abstractmethod
-    def get_swagger_content(self, url, connector):
+    def get_swagger_content(self, url: str, connector: 'BaseAPIConnector') -> Union[str, bytes]:
         pass
 
-    def get_extension(self, url: str):
+    def get_extension(self, url: str) -> str:
         return os.path.splitext(url)[1][1:]
 
     def get_swagger_data(self, extension: str, contents: Union[str, bytes]) -> dict:
