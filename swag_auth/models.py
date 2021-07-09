@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from encrypted_model_fields.fields import EncryptedTextField
 
 import swag_auth.registry as registry
 from swag_auth.api_connector import BaseGitSwaggerDownloader
@@ -14,11 +13,11 @@ class ConnectorToken(models.Model):
         max_length=30,
     )
 
-    token = EncryptedTextField(
+    token = models.TextField(
         verbose_name=_("token"),
         help_text=_('"oauth_token" (OAuth1) or access token (OAuth2)'),
     )
-    token_secret = EncryptedTextField(
+    token_secret = models.TextField(
         blank=True,
         verbose_name=_("token secret"),
         help_text=_('"oauth_token_secret" (OAuth1) or refresh token (OAuth2)'),

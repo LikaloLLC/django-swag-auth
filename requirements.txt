@@ -1,10 +1,8 @@
-django==2.2.2
+django>=2.2.2
 django-allauth==0.44.0
 django-rest-auth==0.9.5
 django-environ~=0.4.5
 pyyaml~=5.4.1
-
-django-encrypted-model-fields~=0.5.8
 
 # Guthub API client
 PyGithub~=1.55
