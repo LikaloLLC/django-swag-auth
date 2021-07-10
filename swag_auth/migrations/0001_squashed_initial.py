@@ -6,9 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
-    replaces = [('swag_auth', '0001_initial'), ('swag_auth', '0002_token_text_field')]
-
     initial = True
 
     dependencies = [
