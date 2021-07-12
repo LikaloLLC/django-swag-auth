@@ -47,6 +47,17 @@ class CustomOAuth2Adapter(OAuth2Adapter):
         code = get_request_param(self.request, "code")
         return client.get_access_token(code)
 
+    @classmethod
+    def get_package(cls):
+        pkg = getattr(cls, "package", None)
+        if not pkg:
+            pkg = cls.__module__.rpartition(".")[0]
+        return pkg
+
+    @classmethod
+    def get_slug(cls):
+        return cls.provider_id
+
     def store_credentials(self, request, token: 'ConnectorToken'):
         """
         Save credentials in the ConnectorToken model.

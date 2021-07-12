@@ -38,7 +38,11 @@ setuptools.setup(
         "bitbucket-api",
         "atlassian-python-api",
         "django-environ",
-        "giturlparse"
+        "giturlparse",
+        "google-api-python-client",
+        "google-auth-httplib2",
+        "google-auth-oauthlib",
+        "dropbox"
     ],
     include_package_data=True,
     setup_requires=["wheel"]

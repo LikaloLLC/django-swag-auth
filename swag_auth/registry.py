@@ -1,6 +1,7 @@
 import importlib
-import pkgutil
 from collections import OrderedDict
+
+from django.conf import settings
 
 
 class ConnectorRegistry(object):
@@ -9,11 +10,6 @@ class ConnectorRegistry(object):
         self.loaded = False
 
         self.module_name = module_name
-
-    def get_apps(self):
-        package = importlib.import_module(self.module_name)
-
-        return [name for _, name, _ in pkgutil.iter_modules(package.__path__)]
 
     def get_list(self, request=None):
         self.load()
@@ -38,11 +34,13 @@ class ConnectorRegistry(object):
         # forcefully importing the `connector` modules here. The overall
         # mechanism is way to magical and depends on the import order et al, so
         # all of this really needs to be revisited.
-        apps = self.get_apps()
+
         if not self.loaded:
-            for app in apps:
+            for app in settings.INSTALLED_APPS:
                 try:
-                    connector_module = importlib.import_module(f'{self.module_name}.{app}.connectors')
+                    if not app.startswith(self.module_name):
+                        continue
+                    connector_module = importlib.import_module(f'{app}.connectors')
                 except ImportError:
                     pass
                 else:

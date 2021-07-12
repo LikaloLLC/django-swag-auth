@@ -3,12 +3,12 @@ from urllib.parse import urlparse
 from atlassian.bitbucket.cloud import Cloud
 from django.conf import settings
 
-from swag_auth.api_connector import BaseGitSwaggerDownloader
+from swag_auth.api_connector import BaseGitSwaggerDownloader, BaseGitAPIConnector
 from swag_auth.bitbucket.client import BitbucketAPIClient
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
-class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
+class BitbucketAPIConnector(BaseGitAPIConnector):
     def __init__(self, token):
         super().__init__(token)
 
@@ -64,6 +64,10 @@ class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
         repo_name = repo_name.strip('-').strip('/')
         owner, repo_name = repo_name.split('/')
         return owner, repo_name, branch, path
+
+
+class BitbucketSwaggerDownloader(BaseGitSwaggerDownloader):
+    api_connector_cls = BitbucketAPIConnector
 
 
 class BitbucketConnector(CustomOAuth2Adapter):

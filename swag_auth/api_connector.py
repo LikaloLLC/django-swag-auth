@@ -1,32 +1,11 @@
-import json
-import os
-from abc import ABC, abstractmethod
-from typing import Union
+from abc import abstractmethod
 
-import yaml
 from giturlparse import parse
-from rest_framework.exceptions import ValidationError
+
+from swag_auth.base import BaseAPIConnector, BaseSwaggerDownloader
 
 
-class BaseGitAPIConnector(ABC):
-    def __init__(self, token):
-        self._token = token
-
-    @classmethod
-    def from_credentials(cls, credentials):
-        return cls(credentials.token)
-
-    @abstractmethod
-    def get_file_content(self, repo, path, ref):
-        """
-        Return content of the given path file
-        :param repo:
-        :param path:
-        :param ref:
-        :return:
-        """
-        pass
-
+class BaseGitAPIConnector(BaseAPIConnector):
     @abstractmethod
     def get_user_repo(self, repo_name):
         """
@@ -70,39 +49,14 @@ class BaseGitAPIConnector(ABC):
         return owner, repo_name, branch, path
 
 
-class BaseGitSwaggerDownloader(BaseGitAPIConnector, ABC):
-    # A mapping of extension name to a real loader
-    loaders = {
-        'json': json.loads,
-        'yml': yaml.safe_load,
-        'yaml': yaml.safe_load
-    }
+class BaseGitSwaggerDownloader(BaseSwaggerDownloader):
+    api_connector_cls = BaseGitAPIConnector
 
-    def get_swagger_data(self, path: str, contents: Union[str, bytes]):
-        extension = os.path.splitext(path)[1][1:]
-
-        return self.loaders[extension](contents)
-
-    def get_swagger(self, url: str) -> dict:
-        owner, repo_name, branch, path = self._parse_url(url)
-
-        if not self.is_path_valid(path):
-            raise ValidationError("File content type must be JSON, YAML or YML")
-
-        repo = self.get_user_repo(repo_name=f'{owner}/{repo_name}')
+    def get_swagger_content(self, url, connector):
+        owner, repo_name, branch, path = connector._parse_url(url)
+        repo = connector.get_user_repo(repo_name=f'{owner}/{repo_name}')
 
         if not branch:
-            branch = self.get_default_branch(repo)
+            branch = connector.get_default_branch(repo)
 
-        contents = self.get_file_content(repo=repo, path=path, ref=branch)
-
-        return self.get_swagger_data(path, contents)
-
-    def is_path_valid(self, path: str) -> bool:
-        """
-        Validate path to YAML or JSON
-        :param path:
-        :return: bool:
-        """
-        extension = os.path.splitext(path)[1][1:]
-        return extension in self.loaders
+        return connector.get_file_content(repo=repo, path=path, ref=branch)
