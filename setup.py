@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="swag_auth",
-    version="0.0.1",
+    version="0.0.6",
     author="Likalo Limited",
     author_email="hello@docsie.io",
     description="This is an open source implementation of swag-auth",
