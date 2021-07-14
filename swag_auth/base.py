@@ -2,6 +2,7 @@ import json
 import os
 from abc import abstractmethod, ABC
 from typing import Union, Type
+from urllib.parse import unquote
 
 import yaml
 from django.core.exceptions import ValidationError
@@ -35,8 +36,8 @@ class BaseSwaggerDownloader(ABC):
 
     def __init__(self, token):
         if (
-            self.api_connector_cls is None
-            or not issubclass(self.api_connector_cls, BaseAPIConnector)
+                self.api_connector_cls is None
+                or not issubclass(self.api_connector_cls, BaseAPIConnector)
         ):
             raise TypeError(
                 'parameter `api_connector` must not be None '
@@ -68,7 +69,7 @@ class BaseSwaggerDownloader(ABC):
         pass
 
     def get_extension(self, url: str) -> str:
-        return os.path.splitext(url)[1][1:]
+        return os.path.splitext(unquote(url))[1][1:]
 
     def get_swagger_data(self, extension: str, contents: Union[str, bytes]) -> dict:
         return self.loaders[extension](contents)
