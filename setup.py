@@ -44,6 +44,7 @@ setuptools.setup(
         "google-auth-oauthlib",
         "dropbox",
         "google-cloud-storage",
+        'boxsdk',
     ],
     include_package_data=True,
     setup_requires=["wheel"]

@@ -32,3 +32,6 @@ google-cloud-storage
 
 # Dropbox API client
 dropbox~=11.13.1
+
+# Box API Client
+boxsdk~=2.12.1
