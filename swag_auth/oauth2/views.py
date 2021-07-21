@@ -17,6 +17,7 @@ from swag_auth.models import ConnectorToken
 
 
 class CustomOAuth2Adapter(OAuth2Adapter):
+    audience = None
     provider_id = None
     client_id = None
     secret = None
@@ -111,7 +112,12 @@ class OAuth2LoginView(OAuth2View):
         auth_url = self.adapter.authorize_url
         client.state = SocialLogin.stash_state(request)
         try:
-            return HttpResponseRedirect(client.get_redirect_url(auth_url, {}))
+            redirect_url = client.get_redirect_url(auth_url, {})
+
+            if self.adapter.audience:
+                redirect_url += '&audience={}'.format(self.adapter.audience)
+
+            return HttpResponseRedirect(redirect_url)
         except OAuth2Error as e:
             return render_authentication_error(request, self.adapter.provider_id, exception=e)
 

@@ -38,10 +38,10 @@ class ConfluenceConnector(CustomOAuth2Adapter):
     provider_id = 'confluence'
     access_token_url = "https://auth.atlassian.com/oauth/token"
     authorize_url = "https://auth.atlassian.com/authorize"
+    audience = 'api.atlassian.com'
     client_id = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['client_id']
     secret = settings.SWAGAUTH_SETTINGS[provider_id]['APP']['secret']
     scope = settings.SWAGAUTH_SETTINGS[provider_id]['SCOPE']
-    callback_url = 'http://127.0.0.1:8000/swag/confluence/login/callback/'
 
     api_connector_class = ConfluenceSwaggerDownloader
 
