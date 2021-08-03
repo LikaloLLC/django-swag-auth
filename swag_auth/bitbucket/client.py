@@ -35,5 +35,5 @@ class BitbucketAPIClient:
 
         return requests.get(url=url, headers=self.get_header()).content
 
-    def get_contents_url(self, repo_name, filepath, ref) -> str:
+    def get_contents_endpoint_url(self, repo_name, filepath, ref) -> str:
         return self.api_url + 'repositories/' + repo_name + f'/src/{ref}/' + filepath + '?ref=' + ref
