@@ -26,5 +26,14 @@ class BitbucketAPIClient:
         :param path_file:
         :return:
         """
-        url = self.api_url + 'repositories/' + repo_name + f'/src/{ref}/' + path_file + '?ref=' + ref
-        return json.loads(requests.get(url=url, headers=self.get_header()).content)['values']
+        url = self.get_contents_url(repo_name, path_file, ref)
+
+        return requests.get(url=url, headers=self.get_header()).json()['values']
+
+    def get_file_content(self, repo_name, filepath, ref):
+        url = self.get_contents_url(repo_name, filepath, ref)
+
+        return requests.get(url=url, headers=self.get_header()).content
+
+    def get_contents_url(self, repo_name, filepath, ref) -> str:
+        return self.api_url + 'repositories/' + repo_name + f'/src/{ref}/' + filepath + '?ref=' + ref
