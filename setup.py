@@ -42,7 +42,9 @@ setuptools.setup(
         "google-api-python-client",
         "google-auth-httplib2",
         "google-auth-oauthlib",
-        "dropbox"
+        "dropbox",
+        "google-cloud-storage",
+        'boxsdk',
     ],
     include_package_data=True,
     setup_requires=["wheel"]

@@ -27,5 +27,11 @@ google-api-python-client~=2.11.0
 google-auth-httplib2~=0.1.0
 google-auth-oauthlib~=0.4.4
 
+# Google Cloud Storage
+google-cloud-storage
+
 # Dropbox API client
 dropbox~=11.13.1
+
+# Box API Client
+boxsdk~=2.12.1
