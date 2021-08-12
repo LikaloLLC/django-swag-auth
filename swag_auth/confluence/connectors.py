@@ -1,37 +1,46 @@
-from atlassian import Confluence
+import re
 from django.conf import settings
 
 from swag_auth.base import BaseAPIConnector, BaseSwaggerDownloader
+from swag_auth.confluence.client import Client
 from swag_auth.oauth2.views import CustomOAuth2Adapter
 
 
 class ConfluenceAPIConnector(BaseAPIConnector):
-    def __init__(self, token):
+    def __init__(self, email, token, domain):
         super().__init__(token)
-        token = {
-            'access_token': token,
-            'token_type': 'Bearer'
-        }
-        oauth2_dict = {
-            "client_id": settings.SWAGAUTH_SETTINGS['confluence']['APP']['client_id'],
-            "token": token}
-        self.client = Confluence(url='https://api.atlassian.com', oauth2=oauth2_dict)
+        self.email = email
+        self.domain = domain
+        self.client = Client(self.email, token, self.domain)
 
-    def get_file_content(self, path: str):
-        return
+    def get_file_content(self, page_id: int):
+        return self.client.get_page_html(page_id=page_id)
+
+    def __str__(self):
+        return "ConfluenceAPIConnector"
 
 
 class ConfluenceSwaggerDownloader(BaseSwaggerDownloader):
     api_connector_cls = ConfluenceAPIConnector
 
+    def __init__(self, email, token, domain):
+        self.email = email
+        self.domain = domain
+        super().__init__(token)
+        self.token = token
+
+    def get_api_connector(self):
+        return self.api_connector_cls(self.email, self._token, self.domain)
+
     def get_swagger_content(self, url: str, connector: 'ConfluenceAPIConnector'):
-        ...
+        page_id = self.get_page_id(url)
 
-    def get_path(self, url: str) -> str:
-        ...
+        return connector.get_file_content(page_id=page_id)
 
-    def get_extension(self, url: str) -> str:
-        ...
+    def get_page_id(self, url: str) -> int:
+        pattern = re.compile('/pages/([\d-])/')
+        a = pattern.search(url)
+        return 98472
 
 
 class ConfluenceConnector(CustomOAuth2Adapter):
